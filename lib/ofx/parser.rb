@@ -29,13 +29,18 @@ module OFX
       end
 
       def open_resource(resource)
-        if resource.respond_to?(:read)
-          resource
-        else
-          open(resource)
+        # TODO: as for the code this maybe a string as well
+        raise OFX::UnsupportedFileError, "File does not exist" unless File.exist?(resource)
+
+        begin
+          if resource.respond_to?(:read)
+            resource
+          else
+            open(resource)
+          end
+        rescue
+          StringIO.new(resource)
         end
-      rescue
-        StringIO.new(resource)
       end
 
       private
